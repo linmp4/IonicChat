@@ -91,7 +91,7 @@
     "cordova-plugin-media": {
         "source": {
             "type": "registry",
-            "id": "cordova-plugin-media@1.0.1"
+            "id": "cordova-plugin-media"
         },
         "is_top_level": true,
         "variables": {}

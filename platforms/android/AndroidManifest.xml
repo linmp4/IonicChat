@@ -1,94 +1,58 @@
 <?xml version='1.0' encoding='utf-8'?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.ionicframework.cordovaim609813"
-          android:hardwareAccelerated="true"
-          android:versionCode="1"
-          android:versionName="0.0.1">
-
-    <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:resizeable="true"
-        android:smallScreens="true"
-        android:xlargeScreens="true"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <application
-        android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_check"
-        android:label="@string/app_name"
-        android:supportsRtl="true">
-        <activity
-            android:name="MainActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale"
-            android:label="@string/activity_name"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
-            android:windowSoftInputMode="adjustResize">
+<manifest android:hardwareAccelerated="true" android:versionCode="1" android:versionName="0.0.1" package="com.ionicframework.cordovaim609813" xmlns:android="http://schemas.android.com/apk/res/android">
+    <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:resizeable="true" android:smallScreens="true" android:xlargeScreens="true" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:hardwareAccelerated="true" android:icon="@drawable/ic_check" android:label="@string/app_name" android:supportsRtl="true">
+        <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale" android:label="@string/activity_name" android:launchMode="singleTop" android:name="MainActivity" android:theme="@android:style/Theme.DeviceDefault.NoActionBar" android:windowSoftInputMode="adjustResize">
             <intent-filter android:label="@string/launcher_name">
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name="io.rong.imlib.ipc.RongService"
-            android:process=":ipc"/>
-        <service android:name="io.rong.imlib.ReConnectService"/>
-
-        <receiver android:name="io.rong.imlib.ConnectChangeReceiver"/>
-        <receiver
-            android:name="io.rong.push.notification.PushMessageReceiver"
-            android:permission="rong.permission.push.com.rong.app">
+        <service android:name="io.rong.imlib.ipc.RongService" android:process=":ipc" />
+        <service android:name="io.rong.imlib.ReConnectService" />
+        <receiver android:name="io.rong.imlib.ConnectChangeReceiver" />
+        <receiver android:name="io.rong.push.notification.PushMessageReceiver" android:permission="rong.permission.push.com.rong.app">
             <intent-filter>
-                <action android:name="io.rong.push.intent.action.message"/>
+                <action android:name="io.rong.push.intent.action.message" />
             </intent-filter>
         </receiver>
-
-        <service
-            android:name="io.rong.push.PushService"
-            android:process="io.rong.push">
+        <service android:name="io.rong.push.PushService" android:process="io.rong.push">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <action android:name="io.rong.push"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="io.rong.push" />
             </intent-filter>
         </service>
-        <receiver
-            android:name="io.rong.push.PushReceiver"
-            android:process="io.rong.push">
+        <receiver android:name="io.rong.push.PushReceiver" android:process="io.rong.push">
             <intent-filter>
-                <action android:name="io.rong.push.intent.action.HeartBeat"/>
+                <action android:name="io.rong.push.intent.action.HeartBeat" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.USER_PRESENT"/>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
-        <meta-data
-            android:name="RONG_CLOUD_APP_KEY"
-            android:value="qf3d5gbjqfddh"/>
+        <meta-data android:name="RONG_CLOUD_APP_KEY" android:value="qf3d5gbjqfddh" />
+        <meta-data android:name="RONG_CLOUD_APP_KEY" android:value="z3v5yqkbv8v30" />
     </application>
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="23"/>
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.RECORD_VIDEO"/>
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECORD_VIDEO" />
 </manifest>
