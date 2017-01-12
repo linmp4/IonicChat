@@ -235,6 +235,25 @@ angular.module('cordovaim.controllers', [])
       }
     );
   }
+
+  $scope.logout2 = function() {
+    RongCloudLibPlugin.disconnect({isReceivePush: false},
+      function(ret, err) {
+        if (ret) {
+          console.log('disconnect:' + JSON.stringify(ret));
+          $ionicHistory.clearCache();
+          $state.go('login');
+          // $scope.$emit('$destroy');
+          // $window.location.reload(true);
+        }
+        if (err) {
+          console.log('disconnect error:' + JSON.stringify(err));
+          alert('disconnect error:' + JSON.stringify(err));
+        }
+      }
+    );
+  }
+
   $scope.goTest = function() {
     $state.go('tab.testdetail');
   }
