@@ -83,11 +83,11 @@ angular.module('cordovaim.services', [])
 
   // Some fake testing data
   var friends = [
-    // { id: 'aaa5936', name: 'aaa5936', conversationType: 'PRIVATE', token: 'D2aiwIsFqQZcOVOfo58U115ReSzR6ZozkbNAw1/H/RsaAK5ujc/323A5gExH7RdfsmOkEV3tL3DMpbwNLzT4vg==', img: 'img/personPhoto.png' },
-    // { id: 'apple', name: 'apple', conversationType: 'PRIVATE', token: 'TjAbmhGhGXRuepTtqDAfCtWgY1boRpOYK6FgU1IoeZf//1OMUHmvxoWLBTvyf63B6DZUxfXIvcsVoh1qaI5grQ==' , img: 'img/personPhoto.png'},
-    // { id: 'aaa8925', name: 'aaa8925', conversationType: 'PRIVATE', token: 'GaaCAcWE4XN1LJOwFTPOPwKMJXK9QJjrT0jg7bQVbyFkWAjOhd98ps9vTQMvjzrzFuflJZpUpRpCaa7Eq+teCQ==' , img: 'img/personPhoto.png'},
-    // { id: 'aaa1581', name: 'aaa1581', conversationType: 'PRIVATE', token: 'k2hdO+214I5jKbRj7eTjnx8GDmKKI/aTcJAT/FHkp9xb9+ZzBkGe1lSwO1nIcB62UmLXQSc7q8wtnAehGKocLz+Vdb6L9JzF' , img: 'img/personPhoto.png'},
-    // { id: 'aaa6119', name: 'aaa6119', conversationType: 'PRIVATE', token: 'ZLXoL+yj3+MvCx6QgJ+8LNWgY1boRpOYK6FgU1IoeZfLYL+xR80FBwDBLSl+0AWYI7yH1+g1x7AXRv3mNvMhL0GTbjiTik0x' , img: 'img/personPhoto.png'}
+     { id: 'test2', name: 'test2', conversationType: 'PRIVATE', token: 'RBcbP32aZqzIKDlPRjaUFCKBUHlZoyCdLxmr+kqWLv2gZllI6q9H1d1KGpR0lEnyZH8TxhvNj6U0NV4ymNdKig==', img: 'img/personPhoto.png' },
+     { id: 'test', name: 'test', conversationType: 'PRIVATE', token: 'bkYsgq0CTykSn1yXCqp4+D+l6TY5LlCMOQLW2I0SMGLk4UwlXNrfatMuIjaZoZJYnIbzaGAWy4xpP6M81sjpVQ==' , img: 'img/personPhoto.png'},
+     { id: 'aaa8925', name: 'aaa8925', conversationType: 'PRIVATE', token: 'GaaCAcWE4XN1LJOwFTPOPwKMJXK9QJjrT0jg7bQVbyFkWAjOhd98ps9vTQMvjzrzFuflJZpUpRpCaa7Eq+teCQ==' , img: 'img/personPhoto.png'},
+     { id: 'aaa1581', name: 'aaa1581', conversationType: 'PRIVATE', token: 'k2hdO+214I5jKbRj7eTjnx8GDmKKI/aTcJAT/FHkp9xb9+ZzBkGe1lSwO1nIcB62UmLXQSc7q8wtnAehGKocLz+Vdb6L9JzF' , img: 'img/personPhoto.png'},
+     { id: 'aaa6119', name: 'aaa6119', conversationType: 'PRIVATE', token: 'ZLXoL+yj3+MvCx6QgJ+8LNWgY1boRpOYK6FgU1IoeZfLYL+xR80FBwDBLSl+0AWYI7yH1+g1x7AXRv3mNvMhL0GTbjiTik0x' , img: 'img/personPhoto.png'}
   ];
 
   return {
@@ -138,8 +138,8 @@ angular.module('cordovaim.services', [])
 })
 .factory('Blacklist', function() {
   var lists = [
-    // { id: 'group1', username: 'group1', portrait: 'img/personPhoto.png' },
-    // { id: 'grp6', username: 'grp6', portrait: 'img/personPhoto.png'}
+     { id: 'group1', username: 'group1', portrait: 'img/personPhoto.png' },
+     { id: 'grp6', username: 'grp6', portrait: 'img/personPhoto.png'}
   ];
   return {
     all: function() {
@@ -175,23 +175,25 @@ angular.module('cordovaim.services', [])
 .service("newMessageEventService",function($rootScope) {
    var msgService = {
       broadcast: function(data) {$rootScope.$broadcast("newMsg", data)},
-      listen: function(callback) {$rootScope.$on("newMsg",callback)}
+      listen: function(callback) {
+        return $rootScope.$on("newMsg",callback)
+      }
    };
    return msgService;
 })
 .service("serverApiService",function($http) {
   //  var appKey = "";
-   var appSecret = "";
-   var nonce = Math.floor(Math.random() * 1000000);
+   var appSecret = "2FYiTXM8Ox4FcZ";
+   var nonce = Math.floor(Math.random() * 10000000000);
    var timestamp = Date.now();
    var signature = SHA1("" + appSecret + nonce + timestamp);
-  //  var url = "https://api.cn.rong.io/";
-  var url = "http://webim.demo.rong.io/";
+    var url = "http://120.92.13.12/";
+//  var url = "http://webim.demo.rong.io/";
    var headers = {
-      "RC-App-Key": _appKey,
-      "RC-Nonce": "" + nonce,
-      "RC-Timestamp": "" + timestamp,
-      "RC-Signature": "" + signature,
+      "App-Key": _appKey,
+      "Nonce": "" + nonce,
+      "Timestamp": "" + timestamp,
+      "Signature": "" + signature,
       "Content-Type": "application/x-www-form-urlencoded"
    };
    var serverService = {
@@ -200,6 +202,15 @@ angular.module('cordovaim.services', [])
                  method: "POST",
                  url: url + data.url,
                  data: 'groupId=' + data.groupId,
+                 headers: headers
+             };
+        return $http(req);
+      },
+      getMyToken: function(data) {
+        var req = {
+                 method: "POST",
+                 url: url + data.url,
+                 data: 'userId='+data.userId,
                  headers: headers
              };
         return $http(req);

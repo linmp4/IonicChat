@@ -1,5 +1,4 @@
-cordova.define("io.rong.imlib.RongCloudLibPlugin", function(require, exports, module) {
-var argscheck = require('cordova/argscheck');
+cordova.define("io.rong.imlib.RongCloudLibPlugin", function(require, exports, module) { var argscheck = require('cordova/argscheck');
 
 var RongCloudLibPlugin = function() {};
 

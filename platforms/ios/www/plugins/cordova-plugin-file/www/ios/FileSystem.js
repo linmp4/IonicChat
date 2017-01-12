@@ -1,5 +1,4 @@
-cordova.define("cordova-plugin-file.iosFileSystem", function(require, exports, module) {
-/*
+cordova.define("cordova-plugin-file.iosFileSystem", function(require, exports, module) { /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -24,7 +23,7 @@ FILESYSTEM_PROTOCOL = "cdvfile";
 
 module.exports = {
     __format__: function(fullPath) {
-        var path = ('/'+this.name+(fullPath[0]==='/'?'':'/')+FileSystem.encodeURIPath(fullPath)).replace('//','/');
+        var path = ('/'+this.name+(fullPath[0]==='/'?'':'/')+encodeURI(fullPath)).replace('//','/');
         return FILESYSTEM_PROTOCOL + '://localhost' + path;
     }
 };

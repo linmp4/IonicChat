@@ -1,6 +1,5 @@
 angular.module('cordovaim.conversation.controller', [])
 .controller('conversationCtrl', function($scope, Friends, Groups, Chatroom, CustomerService, Discussion, newMessageEventService) {
-
   var newMsgCallBack = function(d,data){
     console.log('conversation newMessage' + data);
     jsonMsg = JSON.parse(data);
@@ -99,6 +98,7 @@ angular.module('cordovaim.conversation.controller', [])
             result[i] = myUtil.resolveCon(result[i], 0, target);
             //alert('conversationTitle:'+result[i].conversationTitle);
           }
+          console.log('getConversationList2:result ' + JSON.stringify(result)+" discussionIndex "+discussionIndex);
           if(discussionIndex > -1){
              result[discussionIndex].conversationTitle = Discussion.all()[0].conversationTitle;
           }else{

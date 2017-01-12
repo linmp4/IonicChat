@@ -1,7 +1,8 @@
 {
     "ImageIO.framework": 2,
-    "MapKit.framework": 1,
     "CoreLocation.framework": 2,
+    "AVFoundation.framework": 2,
+    "MapKit.framework": 1,
     "SystemConfiguration.framework": 1,
     "QuartzCore.framework": 1,
     "OpenGLES.framework": 1,
@@ -11,7 +12,6 @@
     "CoreAudio.framework": 1,
     "CFNetwork.framework": 1,
     "AudioToolbox.framework": 1,
-    "AVFoundation.framework": 2,
     "UIKit.framework": 1,
     "libxml2.dylib": 1,
     "libz.dylib": 1,
