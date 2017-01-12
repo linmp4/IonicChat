@@ -13,7 +13,6 @@
 @interface RongCloudLibPlugin () <RongCloud2HybridDelegation>
 @property (nonatomic, strong)RongCloudHybridAdapter *rongCloudAdapter;
 @property (nonatomic, strong)RongCloudAppEventReceiver *appEventReceiver;
-@property (nonatomic, strong)NSString *targetId;
 @end
 
 
@@ -766,8 +765,11 @@
 - (void)setCurrentMessgaeUser:(CDVInvokedUrlCommand *)command {
     NSLog(@"%s", __FUNCTION__);
     
-   _targetId = [command argumentAtIndex:0 withDefault:nil];
+   NSString *targetId = [command argumentAtIndex:0 withDefault:nil];
 
+    if (command.callbackId) {
+        [self.rongCloudAdapter setCurrentMessgaeUser:targetId];
+    }
 }
 
 @end

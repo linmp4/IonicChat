@@ -37,7 +37,7 @@ static BOOL isConnected = NO;
 @property (nonatomic, strong) id connectionCallbackId;
 @property (nonatomic,strong) id receiveMessageCbId;
 @property (nonatomic, assign)BOOL disableLocalNotification;
-
+@property (nonatomic,strong) NSString *targetId;
 @property (nonatomic, weak)id<RongCloud2HybridDelegation> commandDelegate;
 @end
 
@@ -613,7 +613,7 @@ static BOOL isConnected = NO;
          if (0 == nLeft) {
             //post local notification
             [[RCIMClient sharedRCIMClient]getConversationNotificationStatus:message.conversationType targetId:message.targetId success:^(RCConversationNotificationStatus nStatus) {
-                if (NOTIFY == nStatus) {
+                if (NOTIFY == nStatus &&(!_targetId || ![message.targetId isEqualToString:_targetId] )) {
 //                    NSString *_notificationMessae = @"您收到了一条新消息";
                     NSString *_notificationMessae = [self formatNotificationMessage:message.content];
                     
@@ -1937,6 +1937,10 @@ static BOOL isConnected = NO;
     
     NSDictionary *_result = @{@"status": SUCCESS};
     [self.commandDelegate sendResult:_result error:nil withCallbackId:callbackId doDelete:YES];
+}
+
+-(void)setCurrentMessgaeUser:(NSString*)targetid{
+    _targetId = targetid;
 }
 
 #ifdef RC_SUPPORT_IMKIT
