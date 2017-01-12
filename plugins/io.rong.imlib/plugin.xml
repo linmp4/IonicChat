@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="io.rong.imlib" version="2.3.7"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <name>RongCloudLibPlugin</name>
+    <description>Cordova RongCloud IMLib Plugin</description>
+    <author>RongCloud</author>
+    <keywords>RongCloud,IM</keywords>
+    <license>Apache 2.0 License</license>
+    <engines>
+      <engine name="cordova" version=">=3.0" />
+    </engines>
+    <js-module name="RongCloudLibPlugin" src="www/RongCloudLibPlugin.js">
+      <clobbers target="RongCloudLibPlugin"/>
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="RongCloudLibPlugin">
+        <param name="android-package" value="io.rong.cordova.RongCloudLibPlugin"/>
+      </feature>
+    </config-file>
+
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+      <uses-permission android:name="android.permission.INTERNET" />
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+      <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+      <uses-permission android:name="android.permission.RECORD_AUDIO" />
+      <uses-permission android:name="android.permission.GET_TASKS" />
+      <uses-permission android:name="android.permission.WAKE_LOCK" />
+      <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+      <uses-permission android:name="android.permission.VIBRATE" />
+      <uses-permission android:name="android.permission.RECORD_AUDIO" />
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+      <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    </config-file>
+    <config-file target="AndroidManifest.xml" parent="/manifest/application">
+      <!-- Required  SDK核心功能-->
+      <service
+        android:name="io.rong.imlib.ipc.RongService"
+        android:process=":ipc" >
+      </service>
+      <service android:name="io.rong.imlib.ReConnectService" />
+
+      <receiver android:name="io.rong.imlib.ConnectChangeReceiver" />
+      <!-- sdk 默认接收、处理消息。用户如果想要自己处理，可以替换成自己实现的 receiver -->
+        <receiver
+            android:name="io.rong.push.notification.PushMessageReceiver"
+            android:permission="rong.permission.push.com.rong.app">
+            <intent-filter>
+                <action android:name="io.rong.push.intent.action.message" /><!-- 用户接收消息的 intent -->
+            </intent-filter>
+        </receiver>
+
+        <!--必选： SDK 核心功能-->
+        <service
+            android:name="io.rong.push.PushService"
+            android:process="io.rong.push">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="io.rong.push" />
+            </intent-filter>
+        </service>
+
+        <!--必选： SDK 核心功能-->
+        <receiver
+            android:name="io.rong.push.PushReceiver"
+            android:process="io.rong.push">
+            <intent-filter>
+                <action android:name="io.rong.push.intent.action.HeartBeat" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
+
+      <meta-data
+        android:name="RONG_CLOUD_APP_KEY"
+        android:value="z3v5yqkbv8v30" />
+    </config-file>
+
+    <source-file src="src/android/RongCloudLib.jar" target-dir="libs"/>
+    <source-file src="src/android/gson-2.2.4.jar" target-dir="libs"/>
+    <source-file src="src/android/armeabi/libRongIMLib.so" target-dir="libs/armeabi"/>
+    <source-file src="src/android/armeabi-v7a/libRongIMLib.so" target-dir="libs/armeabi-v7a"/>
+    <source-file src="src/android/arm64-v8a/libRongIMLib.so" target-dir="libs/arm64-v8a"/>
+    <source-file src="src/android/x86/libRongIMLib.so" target-dir="libs/x86"/>
+    <source-file src="src/android/RongCloudLibPlugin.java" target-dir="src/io/rong/cordova"/>
+    <source-file src="src/android/common/ErrorCode.java" target-dir="src/io/rong/common"/>
+    <source-file src="src/android/common/RongErrorResult.java" target-dir="src/io/rong/common"/>
+    <source-file src="src/android/common/RongException.java" target-dir="src/io/rong/common"/>
+    <source-file src="src/android/common/RongResult.java" target-dir="src/io/rong/common"/>
+    <source-file src="src/android/common/translation/ITranslatedMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedCommandMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedCommandNotificationMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedContactNtfMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedGrpNtfMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedProfileNtfMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedConversation.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedConversationNtfyStatus.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedDiscussion.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedDiscussionNtfMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedImageMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedInformationNtfMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedLocationMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedMessageContent.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedQuietHour.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedRichContentMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedTextMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/common/translation/TranslatedVoiceMessage.java" target-dir="src/io/rong/common/translation"/>
+    <source-file src="src/android/res/values/rc_notification_string.xml" target-dir="res/values"/>
+    <source-file src="src/android/res/values/rc_configuration.xml" target-dir="res/values"/>
+    <source-file src="src/android/res/values-en/rc_notification_string.xml" target-dir="res/values-en"/>
+  </platform>
+
+  <platform name="ios">
+      <config-file target="config.xml" parent="/*">
+          <feature name="RongCloudLibPlugin">
+              <param name="ios-package" value="RongCloudLibPlugin"/>
+          </feature>
+      </config-file>
+      <header-file src="src/ios/RongCloudAppEventReceiver.h" target-dir="src/ios" />
+      <header-file src="src/ios/RongCloudApplicationHandler.h" target-dir="src/ios" />
+      <header-file src="src/ios/RongCloudHybridAdapter.h" target-dir="src/ios" />
+      <header-file src="src/ios/RongCloudConstant.h" target-dir="src/ios" />
+      <header-file src="src/ios/RongCloudLibPlugin.h" target-dir="src/ios" />
+      <header-file src="src/ios/RongCloudModel.h" target-dir="src/ios" />
+
+      <source-file src="src/ios/RongCloudAppEventReceiver.m" target-dir="src/ios" />
+      <source-file src="src/ios/RongCloudApplicationHandler.m" target-dir="src/ios" />
+      <source-file src="src/ios/RongCloudHybridAdapter.m" target-dir="src/ios" />
+      <source-file src="src/ios/RongCloudLibPlugin.m" target-dir="src/ios" />
+      <source-file src="src/ios/RongCloudModel.m" target-dir="src/ios" />
+      <source-file src="src/ios/libopencore-amrnb.a" framework="true" />
+
+      <resource-file src="src/ios/RCConfig.plist" />
+
+      <framework src="src/ios/RongIMLib.framework" custom="true" />
+      <framework src="AssetsLibrary.framework" />
+      <framework src="ImageIO.framework" />
+      <framework src="MapKit.framework" />
+      <framework src="CoreLocation.framework" />
+      <framework src="SystemConfiguration.framework" />
+      <framework src="QuartzCore.framework" />
+      <framework src="OpenGLES.framework" />
+      <framework src="CoreVideo.framework" />
+      <framework src="CoreTelephony.framework" />
+      <framework src="CoreMedia.framework" />
+      <framework src="CoreAudio.framework" />
+      <framework src="CFNetwork.framework" />
+      <framework src="AudioToolbox.framework" />
+      <framework src="AVFoundation.framework" />
+      <framework src="UIKit.framework" />
+      <framework src="CoreGraphics.framework" />
+      <framework src="libxml2.dylib" />
+      <framework src="libz.dylib" />
+      <framework src="libstdc++.dylib" />
+      <framework src="libsqlite3.dylib" />
+      <framework src="libc++.dylib" />
+      <framework src="libc++abi.dylib" />
+    </platform>
+  </plugin>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="RongCloudLib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/RongCloudLib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
