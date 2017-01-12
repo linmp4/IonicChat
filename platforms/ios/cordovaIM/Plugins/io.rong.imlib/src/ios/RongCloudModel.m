@@ -16,6 +16,7 @@
 //#import "RCDiscussionNotification.h"
 //#import "RCInformationNotificationMessage.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <UserNotifications/UserNotifications.h>
 
 #define RC_KIT_LOCAL_NOTIFICATION_TAG 9999
 
@@ -30,7 +31,7 @@
     NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
     
     for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-        [output appendFormat:@"%02x", digest[i]];
+    [output appendFormat:@"%02x", digest[i]];
     
     return  output;
     
@@ -38,7 +39,7 @@
 +(NSString*) sha1:(NSData*)input
 {
     //const char *cstr = [input cStringUsingEncoding:NSUTF8StringEncoding];
-   // NSData *data = [NSData dataWithBytes:cstr length:input.length];
+    // NSData *data = [NSData dataWithBytes:cstr length:input.length];
     
     uint8_t digest[CC_SHA1_DIGEST_LENGTH];
     
@@ -47,7 +48,7 @@
     NSMutableString* output = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
     
     for(int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++)
-        [output appendFormat:@"%02x", digest[i]];
+    [output appendFormat:@"%02x", digest[i]];
     
     return output;
     
@@ -113,19 +114,52 @@
 {
     [RongCloudModel cancelLocalNotification];
     
-    UILocalNotification *localNotify = [[UILocalNotification alloc] init];
+    if (IOS10) {
+        [self registerNotification:msg Title:title];
+    }else{
+        UILocalNotification *localNotify = [[UILocalNotification alloc] init];
+        
+        NSDate* now1 = [NSDate date];
+        localNotify.timeZone = [NSTimeZone defaultTimeZone];
+        localNotify.repeatInterval = kCFCalendarUnitEra;
+        localNotify.alertAction = NSLocalizedString(@"显示", nil);
+        localNotify.alertBody = [NSString stringWithFormat:@"%@: %@",title,msg];
+        localNotify.fireDate = [now1 dateByAddingTimeInterval:1];
+        
+        [localNotify setSoundName:UILocalNotificationDefaultSoundName];
+        NSDictionary* dict = @{ @"key1" : [NSString stringWithFormat:@"%d", RC_KIT_LOCAL_NOTIFICATION_TAG] };
+        [localNotify setUserInfo:dict];
+        [[UIApplication sharedApplication] scheduleLocalNotification:localNotify];
+    }
+}
+
+//使用 UNNotification 本地通知
++(void)registerNotification:(NSString*)msg Title:(NSString*)title
+{
+    int alerTime = 1;
+    // 使用 UNUserNotificationCenter 来管理通知
+    UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
     
-    NSDate* now1 = [NSDate date];
-    localNotify.timeZone = [NSTimeZone defaultTimeZone];
-    localNotify.repeatInterval = kCFCalendarUnitEra;
-    localNotify.alertAction = NSLocalizedString(@"显示", nil);
-    localNotify.alertBody = [NSString stringWithFormat:@"%@: %@",title,msg];
-    localNotify.fireDate = [now1 dateByAddingTimeInterval:1];
+    //需创建一个包含待通知内容的 UNMutableNotificationContent 对象，注意不是 UNNotificationContent ,此对象为不可变对象。
+    UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+    content.title = [NSString localizedUserNotificationStringForKey:title arguments:nil];
+    content.body = [NSString localizedUserNotificationStringForKey:msg arguments:nil];
+    content.sound = [UNNotificationSound defaultSound];
     
-    [localNotify setSoundName:UILocalNotificationDefaultSoundName];
-    NSDictionary* dict = @{ @"key1" : [NSString stringWithFormat:@"%d", RC_KIT_LOCAL_NOTIFICATION_TAG] };
-    [localNotify setUserInfo:dict];
-    [[UIApplication sharedApplication] scheduleLocalNotification:localNotify];
+    // 在 alertTime 后推送本地推送
+    UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:alerTime repeats:NO];
+    
+    UNNotificationRequest* request =
+    [UNNotificationRequest requestWithIdentifier:@"FiveSecond"
+                                         content:content trigger:trigger];
+    
+    //添加推送成功后的处理！
+    [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"本地通知" message:@"成功添加推送" preferredStyle:UIAlertControllerStyleAlert];
+//        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+//        [alert addAction:cancelAction];
+//        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
+    }];
 }
 
 + (NSString *) saveMessageDataToLocalPath:(NSData *)messageData
@@ -134,12 +168,12 @@
     
     NSArray *array =  NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     
-   // NSString *str_data = [[NSString alloc]initWithData:messageData encoding:NSUTF8StringEncoding];
+    // NSString *str_data = [[NSString alloc]initWithData:messageData encoding:NSUTF8StringEncoding];
     
     NSString *fileName = [RongCloudModel sha1:messageData];//[RongCloudModel md5:str_data];
     
-//    NSNumber *numberObj = @([messageData hash]);
-//    NSString *fileName = [numberObj stringValue];
+    //    NSNumber *numberObj = @([messageData hash]);
+    //    NSString *fileName = [numberObj stringValue];
     
     
     NSString *path = [[array objectAtIndex:0] stringByAppendingPathComponent:fileName];
@@ -155,7 +189,7 @@
         newConversationType = ConversationType_PRIVATE;
     }else if ([oldValue isEqualToString:@"GROUP"])
     {
-      newConversationType = ConversationType_GROUP;
+        newConversationType = ConversationType_GROUP;
     }else if ([oldValue isEqualToString:@"DISCUSSION"])
     {
         newConversationType = ConversationType_DISCUSSION;
@@ -244,19 +278,19 @@
 + (NSString *)RCTransferConnectionStatus:(RCConnectionStatus)status {
     switch (status) {
         case ConnectionStatus_Connected:
-            return @"CONNECTED";
+        return @"CONNECTED";
         case ConnectionStatus_KICKED_OFFLINE_BY_OTHER_CLIENT:
-            return @"KICKED";
+        return @"KICKED";
         case ConnectionStatus_Connecting:
-            return @"CONNECTING";
+        return @"CONNECTING";
         case ConnectionStatus_TOKEN_INCORRECT:
-            return @"TOKEN_INCORRECT";
+        return @"TOKEN_INCORRECT";
         case ConnectionStatus_SignUp:
-            return @"DISCONNECTED";
+        return @"DISCONNECTED";
         case ConnectionStatus_SERVER_INVALID:
-            return @"SERVER_INVALID";
+        return @"SERVER_INVALID";
         default:
-            return @"NETWORK_UNAVAILABLE";
+        return @"NETWORK_UNAVAILABLE";
     }
 }
 + (NSDictionary *)createContentModel:(RCMessageContent *)messageContent
@@ -267,7 +301,7 @@
     NSDictionary * _content;
     if ([messageContent isKindOfClass:[RCTextMessage class]]) {
         RCTextMessage *textMsg = (RCTextMessage*)messageContent;
-
+        
         _content = @{
                      @"text" : [RongCloudModel transferNULLToExptyString:textMsg.content],
                      @"extra": [RongCloudModel transferNULLToExptyString:textMsg.extra]
@@ -278,7 +312,7 @@
         
         NSData *_data = UIImageJPEGRepresentation(imgMsg.thumbnailImage, 0);
         NSString *_path = [RongCloudModel saveMessageDataToLocalPath:_data];
-    
+        
         _content = @{
                      @"imageUrl" : [RongCloudModel transferNULLToExptyString:imgMsg.imageUrl],
                      @"thumbPath": [RongCloudModel transferNULLToExptyString:_path],//存储路径
@@ -361,16 +395,16 @@
     return _default;
 }
 /*+ (NSString *)RCGenerateResultJSONString:(id)result withSuccess:(BOOL)success
-{
-    if (!result) result = @"";
-    
-    NSDictionary *_ret = @{@"result": result, @"status": @(success)};
-    
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_ret options:NSJSONWritingPrettyPrinted error:nil];
-    NSString *_jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
-    
-    return _jsonString;
-}*/
+ {
+ if (!result) result = @"";
+ 
+ NSDictionary *_ret = @{@"result": result, @"status": @(success)};
+ 
+ NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_ret options:NSJSONWritingPrettyPrinted error:nil];
+ NSString *_jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+ 
+ return _jsonString;
+ }*/
 
 + (NSString *)RCGenerateResultJSONString:(id)result withStatus:(NSString *)status
 {
@@ -387,12 +421,12 @@
 {
     if (!conversation) return ([NSDictionary new]);
     
-//    if (!conversation.lastestMessage) {
-//        return nil;
-//    }
+    //    if (!conversation.lastestMessage) {
+    //        return nil;
+    //    }
     
     NSString *_conversation_type = [RongCloudModel RCTransferConversationTypeToString:conversation.conversationType];
-
+    
     NSDictionary *_content = [RongCloudModel createContentModel:conversation.lastestMessage];
     
     NSDictionary *_ret = @{
@@ -401,8 +435,8 @@
                            @"draft"                 :   conversation.draft,
                            @"targetId"              :   conversation.targetId,
                            /*@"latestMessage"         :   @{
-                                   @"content": _content//conversation.jsonDict
-                                   },*/
+                            @"content": _content//conversation.jsonDict
+                            },*/
                            @"latestMessage"         : _content?_content:@"",
                            @"sentStatus"            :   conversation.sentStatus==SentStatus_SENDING?@"SENDING":conversation.sentStatus==SentStatus_SENT?@"SENT":@"FAILED",
                            //@"notificationStatus"    :   @(conversation.), // No this tag for ios version, need to confirm -- miaoguangfa
@@ -476,7 +510,7 @@
                            @"objectName"            :   message.objectName,
                            @"extra"                 :   message.extra == nil?@"":message.extra,
                            @"content"               :   _content
-    
+                           
                            };
     
     return _ret;
@@ -529,13 +563,13 @@
         _inviteStatus = @"CLOSED";
     }
     NSDictionary *_ret = @{
-                                @"id"                   : discussion.discussionId,
-                                @"name"                 : discussion.discussionName,
-                                @"creatorId"            : discussion.creatorId,
-                               // @"conversationType"     : @(discussion.conversationType),
-                                @"memberIdList"         : discussion.memberIdList,
-                                @"inviteStatus"         : _inviteStatus,
-                                //@"pushMessageNotificationStatus" : @(discussion.pushMessageNotificationStatus)
+                           @"id"                   : discussion.discussionId,
+                           @"name"                 : discussion.discussionName,
+                           @"creatorId"            : discussion.creatorId,
+                           // @"conversationType"     : @(discussion.conversationType),
+                           @"memberIdList"         : discussion.memberIdList,
+                           @"inviteStatus"         : _inviteStatus,
+                           //@"pushMessageNotificationStatus" : @(discussion.pushMessageNotificationStatus)
                            };
     return _ret;
 }
@@ -546,9 +580,9 @@
     }
     
     NSDictionary *_ret = @{
-                                @"userId"       : userInfo.userId,
-                                @"name"         : userInfo.name,
-                                @"portraitUri"  : userInfo.portraitUri
+                           @"userId"       : userInfo.userId,
+                           @"name"         : userInfo.name,
+                           @"portraitUri"  : userInfo.portraitUri
                            };
     return _ret;
 }
@@ -608,9 +642,9 @@
         CGFloat heightFactor = targetHeight / height;
         
         if (widthFactor < heightFactor)
-            scaleFactor = widthFactor; // scale to fit height
+        scaleFactor = widthFactor; // scale to fit height
         else
-            scaleFactor = heightFactor; // scale to fit width
+        scaleFactor = heightFactor; // scale to fit width
         scaledWidth  = width * scaleFactor;
         scaledHeight = height * scaleFactor;
         

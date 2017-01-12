@@ -84,6 +84,7 @@
 		DCFB5FF4421B4E72968CC991 /* CDVDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CC6DACED9990420FA96270FA /* CDVDevice.m */; };
 		E4F9E7E0CE6341AF9F5E887C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D11C91C1CC4946E583416FBE /* AVFoundation.framework */; };
 		EA60EEAB00C249C78BCAD3B9 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 542E35C859CF40EF9B964B28 /* CoreAudio.framework */; };
+		F4F726F41E27734C00CAC3D2 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F726F31E27734B00CAC3D2 /* UserNotifications.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,6 +213,8 @@
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
 		ECCE3902BB8F4EE4935124E1 /* QuartzCore.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		EE2C6CED04184BCCA7AA0831 /* CDVCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CDVCamera.m; path = "cordova-plugin-camera/CDVCamera.m"; sourceTree = "<group>"; };
+		F49A1CF11E27781E0047742E /* cordovaIM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = cordovaIM.entitlements; path = cordovaIM/cordovaIM.entitlements; sourceTree = "<group>"; };
+		F4F726F31E27734B00CAC3D2 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = cordovaIM/config.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -220,6 +223,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4F726F41E27734C00CAC3D2 /* UserNotifications.framework in Frameworks */,
 				5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */,
 				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -276,6 +280,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				F49A1CF11E27781E0047742E /* cordovaIM.entitlements */,
 				EB87FDF41871DAF40020F90C /* config.xml */,
 				EB87FDF31871DA8E0020F90C /* www */,
 				EB87FDF21871DA7A0020F90C /* merges */,
@@ -317,6 +322,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F4F726F31E27734B00CAC3D2 /* UserNotifications.framework */,
 				5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */,
@@ -483,7 +489,12 @@
 				LastUpgradeCheck = 510;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
-						DevelopmentTeam = RG24K9Q389;
+						DevelopmentTeam = NU7R6YZ94Z;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -629,8 +640,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = cordovaIM/cordovaIM.entitlements;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = RG24K9Q389;
+				DEVELOPMENT_TEAM = NU7R6YZ94Z;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"cordovaIM/Plugins/io.rong.imlib\"",
@@ -659,7 +671,7 @@
 					"-weak-lSystem",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ionicframework.cordovaim609814--";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ionicframework.cordovaim609814---";
 				PRODUCT_NAME = cordovaIM;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -670,8 +682,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = cordovaIM/cordovaIM.entitlements;
 				COPY_PHASE_STRIP = YES;
-				DEVELOPMENT_TEAM = RG24K9Q389;
+				DEVELOPMENT_TEAM = NU7R6YZ94Z;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"cordovaIM/Plugins/io.rong.imlib\"",
@@ -698,7 +711,7 @@
 					"-weak-lSystem",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ionicframework.cordovaim609814--";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ionicframework.cordovaim609814---";
 				PRODUCT_NAME = cordovaIM;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
