@@ -68,6 +68,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     private Gson mGson;
     private MessageListener mMessageListener;
     private ExecutorService mThreadPool = Executors.newFixedThreadPool(1);
+    private String CurrentMessgaeUser = "null";
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -108,12 +109,13 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     private boolean notificationDisabled = false;
+
     public void disableLocalNotification(CallbackContext context) {
         notificationDisabled = true;
         callModuleSuccess(context);
     }
 
-    private void notifyIfNeed(CallbackContext context,Message message,int left){
+    private void notifyIfNeed(CallbackContext context, final Message message, int left) {
 
         if (isInQuietTime(mContext)) {
             return;
@@ -122,8 +124,8 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         RongIMClient.getInstance().getConversationNotificationStatus(message.getConversationType(), message.getTargetId(), new RongIMClient.ResultCallback<Conversation.ConversationNotificationStatus>() {
             @Override
             public void onSuccess(Conversation.ConversationNotificationStatus conversationNotificationStatus) {
-                if (Conversation.ConversationNotificationStatus.NOTIFY == conversationNotificationStatus) {
-                    sendNotification();
+                if (Conversation.ConversationNotificationStatus.NOTIFY == conversationNotificationStatus && !CurrentMessgaeUser.equals(message.getTargetId())) {
+                    sendNotification(message.getTargetId(), getNotiString(message));
                 }
             }
 
@@ -134,20 +136,38 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         });
     }
 
-    private void sendNotification() {
+    private String getNotiString(Message message) {
+        String objectName = message.getObjectName();
+        String text = "";
+        if (objectName.equals("RC:TxtMsg")) {
+            TextMessage msg = (TextMessage) message.getContent();
+            if (msg != null)
+                text = msg.getContent();
+        } else if (objectName.equals("RC:ImgMsg")) {
+            text = "[图片]";
+        } else if (objectName.equals("RC:DizNtf")) { //刚创建讨论组时，讨论组的第一条信息的类型
+        } else if (objectName.equals("RC:LBSMsg")) {
+            text = "[位置]";
+        } else if (objectName.equals("RC:ImgTextMsg")) {
+            text = "[图文]";
+        } else if (objectName.equals("RC:VcMsg")) {
+            text = "[语音]";
+        }
+        return text;
+    }
+
+    private void sendNotification(String targetId, String notiString) {
         Notification notification = null;
         Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(mContext.getPackageName());
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         PackageManager pm = mContext.getPackageManager();
         ApplicationInfo ai = mContext.getApplicationInfo();
-        String title = (String) pm.getApplicationLabel(ai);
-        String tickerText = mContext.getResources().getString(mContext.getResources().getIdentifier("rc_notification_ticker_text", "string", mContext.getPackageName()));
+        String title = targetId;
+        String tickerText = notiString;
+//        String title = (String) pm.getApplicationLabel(ai);
+//        String tickerText = mContext.getResources().getString(mContext.getResources().getIdentifier("rc_notification_ticker_text", "string", mContext.getPackageName()));
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
         if (android.os.Build.VERSION.SDK_INT < 11) {
-            // notification = new Notification(ai.icon, tickerText, System.currentTimeMillis());
-            // notification.setLatestEventInfo(mContext, title, tickerText, pendingIntent);
-            // notification.flags = Notification.FLAG_AUTO_CANCEL;
-            // notification.defaults = Notification.DEFAULT_SOUND;
             try {
                 Method method;
                 notification = new Notification(mContext.getApplicationInfo().icon, tickerText, System.currentTimeMillis());
@@ -188,8 +208,9 @@ public class RongCloudLibPlugin extends CordovaPlugin {
 
         @Override
         public boolean onReceived(Message message, int left) {
-            if(isInBackground() && !notificationDisabled) {
-                notifyIfNeed(context,message,left);
+            if (!notificationDisabled) {
+//            if (isInBackground() && !notificationDisabled) {
+                notifyIfNeed(context, message, left);
             }
             TranslatedMessage msg = translateMessage(message);
             callModuleSuccessWithoutStatus(context, new ReceiveMessageModel(left, msg), true);
@@ -211,7 +232,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     void connect(final JSONArray args, final CallbackContext callbackContext) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(callbackContext, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -240,7 +261,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void logout(JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -254,7 +275,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void getConversationList(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -286,6 +307,9 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         });
     }
 
+    public void setCurrentMessgaeUser(final JSONArray args, final CallbackContext context) {
+        CurrentMessgaeUser = args.optString(0);
+    }
 
     public void setOnReceiveMessageListener(final JSONArray args, final CallbackContext context) {
         if (!mInitialized) {
@@ -314,7 +338,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     void sendTextMessage(final JSONArray args, final CallbackContext callbackContext) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(callbackContext, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -362,7 +386,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void sendImageMessage(final JSONArray args, final CallbackContext callbackContext) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(callbackContext, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -418,7 +442,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void sendVoiceMessage(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -478,7 +502,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void sendRichContentMessage(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -528,7 +552,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
 
 
     public void sendLocationMessage(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -585,7 +609,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void getGroupConversationList(JSONArray array, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -618,7 +642,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void sendCommandNotificationMessage(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -662,7 +686,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void sendCommandMessage(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -706,7 +730,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
     }
 
     public void getConversationNotificationStatus(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -744,7 +768,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
 
 
     public void setConversationNotificationStatus(final JSONArray args, final CallbackContext context) {
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
@@ -834,7 +858,8 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             callModuleError(context, new RongException(ErrorCode.NOT_CONNECTED));
             return;
         }
-        TypeToken<ArrayList<Group>> typeToken = new TypeToken<ArrayList<Group>>() {};
+        TypeToken<ArrayList<Group>> typeToken = new TypeToken<ArrayList<Group>>() {
+        };
         List<Group> groups = mGson.fromJson(object.toString(), typeToken.getType());
         if (groups == null || groups.size() == 0) {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
@@ -882,7 +907,6 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             }
         });
     }
-
 
 
     public void quitGroup(final JSONArray args, final CallbackContext context) {
@@ -988,6 +1012,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             }
         });
     }
+
     public void getConversation(final JSONArray args, final CallbackContext context) {
         final String type = args.optString(0);
         final String targetId = args.optString(1);
@@ -1178,7 +1203,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         }
     }
 
-    public void getUnreadCountByConversationTypes(final JSONArray args, final CallbackContext context){
+    public void getUnreadCountByConversationTypes(final JSONArray args, final CallbackContext context) {
         if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
@@ -1206,12 +1231,12 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         mRongClient.getUnreadCount(conversationTypes, new RongIMClient.ResultCallback<Integer>() {
             @Override
             public void onSuccess(Integer integer) {
-                callModuleSuccess(context,integer);
+                callModuleSuccess(context, integer);
             }
 
             @Override
             public void onError(RongIMClient.ErrorCode errorCode) {
-                callModuleError(context,new RongException(errorCode.getValue()));
+                callModuleError(context, new RongException(errorCode.getValue()));
             }
         });
     }
@@ -1495,13 +1520,13 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             return;
         }
         int value;
-        if(status.equals("UNREAD"))
+        if (status.equals("UNREAD"))
             value = 0;
-        else if(status.equals("READ"))
+        else if (status.equals("READ"))
             value = 1;
-        else if(status.equals("LISTENED"))
+        else if (status.equals("LISTENED"))
             value = 2;
-        else if(status.equals("DOWNLOADED"))
+        else if (status.equals("DOWNLOADED"))
             value = 4;
         else {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
@@ -1529,7 +1554,6 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             }
         });
     }
-
 
 
     public void getTextMessageDraft(final JSONArray args, final CallbackContext context) {
@@ -1599,7 +1623,6 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             }
         });
     }
-
 
 
     public void clearTextMessageDraft(final JSONArray args, final CallbackContext context) {
@@ -1711,17 +1734,17 @@ public class RongCloudLibPlugin extends CordovaPlugin {
 
     public void getConnectionStatus(final JSONArray args, final CallbackContext context) {
         RongIMClient.ConnectionStatusListener.ConnectionStatus status;
-        if(!mInitialized) {
+        if (!mInitialized) {
             callModuleError(context, new RongException(ErrorCode.NOT_INIT));
             return;
         }
-        if(mRongClient == null) {
+        if (mRongClient == null) {
             callModuleError(context, new RongException(ErrorCode.NOT_CONNECTED));
             return;
         }
         status = mRongClient.getCurrentConnectionStatus();
         int code = -1;
-        if(status != null)
+        if (status != null)
             code = status.getValue();
         callModuleSuccess(context, new ConnectionStatusResult(code));
     }
@@ -1733,7 +1756,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         final long dateTime = args.optLong(2);
         final int count = args.optInt(3);
 
-        if(mRongClient == null) {
+        if (mRongClient == null) {
             callModuleError(context, new RongException(ErrorCode.NOT_CONNECTED));
             return;
         }
@@ -1778,13 +1801,13 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         }
         final int id = args.optInt(0);
         final String state = args.optString(1);
-        if(state == null){
+        if (state == null) {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
             return;
         }
 
         Message.SentStatus status = Message.SentStatus.valueOf(state);
-        if(id <= 0 || status == null){
+        if (id <= 0 || status == null) {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
             return;
         }
@@ -1855,7 +1878,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             return;
         }
         String id = args.optString(0);
-        if(TextUtils.isEmpty(id)) {
+        if (TextUtils.isEmpty(id)) {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
             return;
         }
@@ -1884,7 +1907,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             return;
         }
         String id = args.optString(0);
-        if(TextUtils.isEmpty(id)) {
+        if (TextUtils.isEmpty(id)) {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
             return;
         }
@@ -1912,7 +1935,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             return;
         }
         String id = args.optString(0);
-        if(TextUtils.isEmpty(id)) {
+        if (TextUtils.isEmpty(id)) {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
             return;
         }
@@ -1973,7 +1996,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
         }
         final String startTime = args.optString(0);
         final int spanMinutes = args.optInt(1);
-        if(TextUtils.isEmpty(startTime)) {
+        if (TextUtils.isEmpty(startTime)) {
             callModuleError(context, new RongException(ErrorCode.ARGUMENT_EXCEPTION));
             return;
         }
@@ -1982,7 +2005,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
             @Override
             public void onSuccess() {
                 callModuleSuccess(context, null);
-                saveNotificationQuietHours(mContext,startTime,spanMinutes);
+                saveNotificationQuietHours(mContext, startTime, spanMinutes);
             }
 
             @Override
@@ -2221,6 +2244,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
 
     private class DiscussionModel {
         String discussionId;
+
         DiscussionModel(String discussionId) {
             this.discussionId = discussionId;
         }
@@ -2385,6 +2409,7 @@ public class RongCloudLibPlugin extends CordovaPlugin {
 
         Integer code;
         String msg;
+
         AdaptConnectionStatus(int code, String msg) {
             this.code = code;
             this.msg = msg;
