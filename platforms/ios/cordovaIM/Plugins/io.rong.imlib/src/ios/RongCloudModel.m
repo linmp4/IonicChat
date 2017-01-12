@@ -109,6 +109,25 @@
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotify];
 }
 
++ (void)postLocalNotification:(NSString*)msg Title:(NSString*)title
+{
+    [RongCloudModel cancelLocalNotification];
+    
+    UILocalNotification *localNotify = [[UILocalNotification alloc] init];
+    
+    NSDate* now1 = [NSDate date];
+    localNotify.timeZone = [NSTimeZone defaultTimeZone];
+    localNotify.repeatInterval = kCFCalendarUnitEra;
+    localNotify.alertAction = NSLocalizedString(@"显示", nil);
+    localNotify.alertBody = [NSString stringWithFormat:@"%@: %@",title,msg];
+    localNotify.fireDate = [now1 dateByAddingTimeInterval:1];
+    
+    [localNotify setSoundName:UILocalNotificationDefaultSoundName];
+    NSDictionary* dict = @{ @"key1" : [NSString stringWithFormat:@"%d", RC_KIT_LOCAL_NOTIFICATION_TAG] };
+    [localNotify setUserInfo:dict];
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotify];
+}
+
 + (NSString *) saveMessageDataToLocalPath:(NSData *)messageData
 {
     
