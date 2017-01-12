@@ -13,6 +13,7 @@
 @interface RongCloudLibPlugin () <RongCloud2HybridDelegation>
 @property (nonatomic, strong)RongCloudHybridAdapter *rongCloudAdapter;
 @property (nonatomic, strong)RongCloudAppEventReceiver *appEventReceiver;
+@property (nonatomic, strong)NSString *targetId;
 @end
 
 
@@ -760,6 +761,13 @@
     if (command.callbackId) {
         [self.rongCloudAdapter disableLocalNotification:command.callbackId];
     }
+}
+
+- (void)setCurrentMessgaeUser:(CDVInvokedUrlCommand *)command {
+    NSLog(@"%s", __FUNCTION__);
+    
+   _targetId = [command argumentAtIndex:0 withDefault:nil];
+
 }
 
 @end

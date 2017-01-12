@@ -85,7 +85,7 @@ angular.module('cordovaim.services', [])
   var friends = [
      { id: 'test2', name: 'test2', conversationType: 'PRIVATE', token: 'RBcbP32aZqzIKDlPRjaUFCKBUHlZoyCdLxmr+kqWLv2gZllI6q9H1d1KGpR0lEnyZH8TxhvNj6U0NV4ymNdKig==', img: 'img/personPhoto.png' },
      { id: 'test', name: 'test', conversationType: 'PRIVATE', token: 'bkYsgq0CTykSn1yXCqp4+D+l6TY5LlCMOQLW2I0SMGLk4UwlXNrfatMuIjaZoZJYnIbzaGAWy4xpP6M81sjpVQ==' , img: 'img/personPhoto.png'},
-     { id: 'aaa8925', name: 'aaa8925', conversationType: 'PRIVATE', token: 'GaaCAcWE4XN1LJOwFTPOPwKMJXK9QJjrT0jg7bQVbyFkWAjOhd98ps9vTQMvjzrzFuflJZpUpRpCaa7Eq+teCQ==' , img: 'img/personPhoto.png'},
+     { id: 'test3', name: 'test3', conversationType: 'PRIVATE', token: 'Y1Zk7lhIH+2MScXgXuHB9j+l6TY5LlCMOQLW2I0SMGLk4UwlXNrfanEEW6CJvVmSG6pQ0C6Lok4JZiSi1Aga4Q==' , img: 'img/personPhoto.png'},
      { id: 'aaa1581', name: 'aaa1581', conversationType: 'PRIVATE', token: 'k2hdO+214I5jKbRj7eTjnx8GDmKKI/aTcJAT/FHkp9xb9+ZzBkGe1lSwO1nIcB62UmLXQSc7q8wtnAehGKocLz+Vdb6L9JzF' , img: 'img/personPhoto.png'},
      { id: 'aaa6119', name: 'aaa6119', conversationType: 'PRIVATE', token: 'ZLXoL+yj3+MvCx6QgJ+8LNWgY1boRpOYK6FgU1IoeZfLYL+xR80FBwDBLSl+0AWYI7yH1+g1x7AXRv3mNvMhL0GTbjiTik0x' , img: 'img/personPhoto.png'}
   ];

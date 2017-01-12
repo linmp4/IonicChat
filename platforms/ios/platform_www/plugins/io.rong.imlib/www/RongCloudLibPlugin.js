@@ -383,7 +383,15 @@ RongCloudLibPlugin.prototype.getNotificationQuietHours = function(retCallback) {
 RongCloudLibPlugin.prototype.disableLocalNotification = function(retCallback) {
     cordova.exec(function(ret){retCallback(ret)}, function(err){retCallback(null, err)}, "RongCloudLibPlugin","disableLocalNotification", []);
 };
-
+               RongCloudLibPlugin.prototype.clearNotifications = function(retCallback) {
+               cordova.exec(function(ret){retCallback(ret)}, function(err){retCallback(null, err)}, "RongCloudLibPlugin","clearNotifications", []);
+               };
+               RongCloudLibPlugin.prototype.setCurrentMessgaeUser = function(options, retCallback) {
+               var getValue = argscheck.getValue;
+               options = options || {};
+               var targetId_ = getValue(options.targetId, null);
+               cordova.exec(function(ret){retCallback(ret)}, function(err){retCallback(null, err)}, "RongCloudLibPlugin","setCurrentMessgaeUser", [targetId_]);
+               };
 
 module.exports = new RongCloudLibPlugin();
 
