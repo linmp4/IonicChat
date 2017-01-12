@@ -86,8 +86,7 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
     if(isIOS){
       path = cordova.file.documentsDirectory;
       src = "cordovaIMVoice.wav";
-    }
-    else{
+    }else{
       path = cordova.file.externalApplicationStorageDirectory;
     }
     var mediaRec;
