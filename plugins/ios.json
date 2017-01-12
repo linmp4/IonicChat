@@ -7,16 +7,28 @@
         "files": {}
     },
     "installed_plugins": {
-        "io.rong.imlib": {
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
         },
-        "cordova-plugin-device": {
+        "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
         },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
         },
-        "cordova-plugin-whitelist": {
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
+        },
+        "cordova-plugin-media": {
+            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
+        },
+        "cordova-plugin-media-capture": {
             "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
         },
         "cordova-plugin-splashscreen": {
@@ -25,28 +37,15 @@
         "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
         },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
+        },
+        "io.rong.imlib": {
+            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
+        },
         "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
-        },
-        "cordova-plugin-media-capture": {
-            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
-        },
-        "cordova-plugin-file": {
-            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
-        },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
-        },
-        "cordova-plugin-media": {
-            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
-        },
-        "cordova-plugin-file-transfer": {
             "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
         }
     },
-    "dependent_plugins": {
-        "cordova-plugin-compat": {
-            "PACKAGE_NAME": "com.ionicframework.cordovaim609813"
-        }
-    }
+    "dependent_plugins": {}
 }

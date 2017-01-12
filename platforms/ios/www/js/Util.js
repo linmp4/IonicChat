@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 2015/9/10.
  */
-var _appKey = "z3v5yqkbv8v30";
+var _appKey = "qf3d5gbjqfddh";
 String.stringFormat = function(str) {
   for (var i = 1; i < arguments.length; i++) {
     str = str.replace(new RegExp("\\{" + (i - 1) + "\\}", "g"), arguments[i] != undefined ? arguments[i] : "");
@@ -75,7 +75,7 @@ var myUtil = {
       switch (conversationType) {
         case 'PRIVATE':
           uname = user ? user.username : '陌生人';
-          title = uname;
+          title = uname ? uname : user.id;
           break;
         case 'DISCUSSION':
           var aa = conversationTitle;
@@ -145,6 +145,7 @@ var myUtil = {
       console.error('resolveCon error:'+e);
       console.error('resolveCon error:'+JSON.stringify(con));
     }
+    console.log("utils conversation "+JSON.stringify(conversation))
     return conversation;
   },
   //解析一条消息

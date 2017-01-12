@@ -1,6 +1,5 @@
 angular.module('cordovaim.controllers', [])
   .controller('AppCtrl', function($scope, $state, $cordovaMedia, $cordovaFile, Friends, Groups, $cordovaCapture, $rootScope, newMessageEventService) {
-
     var chMsg = function(newValue, oldValue) {
       if (newValue !== oldValue) {
         var jsonMsg = newValue.pop();
@@ -72,8 +71,9 @@ angular.module('cordovaim.controllers', [])
   serverService.getFriend().then(function(ret, err){
     if(ret){
       console.log("getFriend:" + JSON.stringify(ret));
-      $scope.friends = ret.data.result;
-      Friends.set(ret.data.result);
+//      $scope.friends = ret.data.result;
+//      Friends.set(ret.data.result);
+        $scope.friends = Friends.all();
     }
     if(err){
       console.log("getFriend err:" + JSON.stringify(err));

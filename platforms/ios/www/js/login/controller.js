@@ -1,11 +1,11 @@
 angular.module('cordovaim.login.controller', [])
-    .controller('LoginCtrl', function ($scope, Friends, $rootScope, $state, $ionicHistory, serverService) {
+    .controller('LoginCtrl', function ($scope, Friends, $rootScope, $state, $ionicHistory, serverService,serverApiService) {
 
         $scope.data = {
             username: "",
             password: ""
         };
-        if (window.RongCloudLibPlugin) {
+//        if (window.RongCloudLibPlugin) {
             // com.rongCloud.lib required
 
             var initRong = function (token) {
@@ -80,41 +80,80 @@ angular.module('cordovaim.login.controller', [])
                 );
             }
 
-        }else{
-            console.log("no chajian")
-        }
+//        }else{
+//            console.log("no chajian")
+//        }
 
-        $scope.login = function () {
+//        $scope.login = function () {
+//            $rootScope.user = {
+//                "id": "test",
+//                "username": "test",
+//                "portrait": "http://www.gravatar.com/avatar/629497a2072fbfdbde466141b2888c42?s=82&d=wavatar",
+//                "token": "bkYsgq0CTykSn1yXCqp4+D+l6TY5LlCMOQLW2I0SMGLk4UwlXNrfatMuIjaZoZJYnIbzaGAWy4xpP6M81sjpVQ=="
+//            };
+//            initRong($rootScope.user.token);
+//        }
+
+        $scope.login2 = function () {
             $rootScope.user = {
-                "id": "78274",
-                "username": "Eva",
+                "id": "test",
+                "username": "test",
                 "portrait": "http://www.gravatar.com/avatar/629497a2072fbfdbde466141b2888c42?s=82&d=wavatar",
-                "token": "9a++ytEwunqmxV0RBXNqn82yq+hfEluLjZ78E1qo4hHrwCrWRcote1512+sMJnu/ofBIBi6KLRnPk4Q6Ktm9Lg=="
+                "token": "S99tcdLOyZeQFODEKQqOkSh8xXe+OT2NEWiY0jTblf6ORD/pu/US1AT8RLRH4wWFRgHchhj15qGsgDhZihwCPA=="
             };
             initRong($rootScope.user.token);
         }
 
-        $scope.login2 = function () {
+        $scope.login3 = function () {
+              serverApiService.getMyToken("").then(function (ret, err) {
+                           if (ret) {
+                               //"data":{"code":200,"result":{"id":"78274","username":"Eva","portrait":"http://www.gravatar.com/avatar/629497a2072fbfdbde466141b2888c42?s=82&d=wavatar","token":"9a++ytEwunqmxV0RBXNqn82yq+hfEluLjZ78E1qo4hHrwCrWRcote1512+sMJnu/ofBIBi6KLRnPk4Q6Ktm9Lg=="}},"status":200,"config":{"method":"POST","transformRequest":[null],"transformResponse":[null],"url":"http://webim.demo.rong.io/email_login_token","data":"email=zhengyi@rongcloud.cn&portraitassword=zyrongcloud","headers":{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json, text/plain, */*"}},"statu
+                               console.log("login data:" + JSON.stringify(ret));
+                           }
+                           if (err) {
+                               console.log("login err:" + JSON.stringify(err));
+                           }
+                       });
+        }
+
+        $scope.login = function () {
             var uid = $scope.data.username;
-            var pwd = $scope.data.password;
-            var user = Friends.get(uid);
-            var data = {email: uid, password: pwd};
-            serverService.login(data).then(function (ret, err) {
-                if (ret) {
-                    //"data":{"code":200,"result":{"id":"78274","username":"Eva","portrait":"http://www.gravatar.com/avatar/629497a2072fbfdbde466141b2888c42?s=82&d=wavatar","token":"9a++ytEwunqmxV0RBXNqn82yq+hfEluLjZ78E1qo4hHrwCrWRcote1512+sMJnu/ofBIBi6KLRnPk4Q6Ktm9Lg=="}},"status":200,"config":{"method":"POST","transformRequest":[null],"transformResponse":[null],"url":"http://webim.demo.rong.io/email_login_token","data":"email=zhengyi@rongcloud.cn&portraitassword=zyrongcloud","headers":{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json, text/plain, */*"}},"statu
-                    console.log("login data:" + JSON.stringify(ret));
-                    if (ret.data.code == "200") {
-                        $rootScope.user = ret.data.result;
-                        initRong($rootScope.user.token);
-                    }
-                    else {
-                        alert("email or password is error");
-                    }
-                }
-                if (err) {
-                    console.log("login err:" + JSON.stringify(err));
-                }
-            });
+//            var pwd = $scope.data.password;
+//            var user = Friends.get(uid);
+            var data = {userId: uid,url:"user/getToken.json"};
+            serverApiService.getMyToken(data).then(function (ret, err) {
+               if (ret) {
+                   //"data":{"code":200,"result":{"id":"78274","username":"Eva","portrait":"http://www.gravatar.com/avatar/629497a2072fbfdbde466141b2888c42?s=82&d=wavatar","token":"9a++ytEwunqmxV0RBXNqn82yq+hfEluLjZ78E1qo4hHrwCrWRcote1512+sMJnu/ofBIBi6KLRnPk4Q6Ktm9Lg=="}},"status":200,"config":{"method":"POST","transformRequest":[null],"transformResponse":[null],"url":"http://webim.demo.rong.io/email_login_token","data":"email=zhengyi@rongcloud.cn&portraitassword=zyrongcloud","headers":{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json, text/plain, */*"}},"statu
+                   console.log("login data:" + JSON.stringify(ret));
+                   $rootScope.user = {
+                       "id": ret.data.userId,
+                       "username": ret.data.userId,
+                       "portrait": "http://www.gravatar.com/avatar/629497a2072fbfdbde466141b2888c42?s=82&d=wavatar",
+                       "token": ret.data.token
+                   };
+                   console.log("login data2:"+JSON.stringify($rootScope.user))
+                   initRong($rootScope.user.token);
+               }
+               if (err) {
+                   console.log("login err:" + JSON.stringify(err));
+               }
+           });
+//            serverService.login(data).then(function (ret, err) {
+//                if (ret) {
+//                    //"data":{"code":200,"result":{"id":"78274","username":"Eva","portrait":"http://www.gravatar.com/avatar/629497a2072fbfdbde466141b2888c42?s=82&d=wavatar","token":"9a++ytEwunqmxV0RBXNqn82yq+hfEluLjZ78E1qo4hHrwCrWRcote1512+sMJnu/ofBIBi6KLRnPk4Q6Ktm9Lg=="}},"status":200,"config":{"method":"POST","transformRequest":[null],"transformResponse":[null],"url":"http://webim.demo.rong.io/email_login_token","data":"email=zhengyi@rongcloud.cn&portraitassword=zyrongcloud","headers":{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json, text/plain, */*"}},"statu
+//                    console.log("login data:" + JSON.stringify(ret));
+//                    if (ret.data.code == "200") {
+//                        $rootScope.user = ret.data.result;
+//                        initRong($rootScope.user.token);
+//                    }
+//                    else {
+//                        alert("email or password is error");
+//                    }
+//                }
+//                if (err) {
+//                    console.log("login err:" + JSON.stringify(err));
+//                }
+//            });
             // console.log("LOGIN user: " + $scope.data.username + " - PW: " + $scope.data.password);
             // // alert(JSON.stringify(user));
             // console.log('Friends:'+JSON.stringify(Friends.all()));

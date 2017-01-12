@@ -4,12 +4,12 @@
   The FriendsCtrl pulls data from the Friends service (service.js)
   The Friends service returns an array of friend data
 -->
-<ion-view title="{{target.username}}" cache-view="false" hide-tabs>
+<ion-view title="{{target.name}}" cache-view="false" hide-tabs>
   <ion-content has-footer="true" padding="true" style="height: calc(100vh - 180px);">
 
       <ion-refresher on-refresh="doRefresh()"
-                             pulling-text="Pull to load more..."
-                             refreshing-text="Refreshing!"
+                             pulling-text=""
+                             refreshing-text=""
                              refreshing-icon="ion-loading-b">
 
       </ion-refresher>
