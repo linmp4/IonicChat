@@ -75,7 +75,7 @@ var myUtil = {
       switch (conversationType) {
         case 'PRIVATE':
           uname = user ? user.username : '陌生人';
-          title = uname;
+          title = uname ? uname : user.id;
           break;
         case 'DISCUSSION':
           var aa = conversationTitle;
@@ -145,6 +145,7 @@ var myUtil = {
       console.error('resolveCon error:'+e);
       console.error('resolveCon error:'+JSON.stringify(con));
     }
+    console.log("utils conversation "+JSON.stringify(conversation))
     return conversation;
   },
   //解析一条消息

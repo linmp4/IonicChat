@@ -1,13 +1,14 @@
 angular.module('cordovaim.frienddetail.controller', ['ionic'])
   .controller('friendDetailCtrl', function($scope, $stateParams, $compile, $ionicPlatform, $rootScope, $cordovaCamera, $cordovaMedia, $cordovaCapture, $cordovaFileTransfer, $cordovaFile, $timeout, newMessageEventService, $ionicScrollDelegate, Friends, Groups) {
 
-      $scope.$on('$destroy', function() {
-        console.log('friendDetailCtrl destroy');
-      });
+    $scope.$on('$destroy', function() {
+      console.log('friendDetailCtrl destroy');
+      friendDetailCtrl_Callback();
+      friendDetailCtrl_Callback = null;
+      RongCloudLibPlugin.setCurrentMessgaeUser({targetId:null});
+    });
 
-
-
-      var newMsgCallBack = function(d,data){
+    var newMsgCallBack = function(d,data){
       console.log('frienddetail newMessage' + data);
       var jsonMsg = JSON.parse(data);
       if ($stateParams.targetId == jsonMsg.targetId) {
@@ -33,7 +34,9 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
         $ionicScrollDelegate.scrollBottom(true);
       }
     };
-    newMessageEventService.listen(newMsgCallBack);
+
+   var friendDetailCtrl_Callback = newMessageEventService.listen(newMsgCallBack);
+
     $scope.doRefresh = function() {
 
       console.log('Refreshing!');
@@ -117,45 +120,6 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
       return false;
 
     };
-    // $scope.play = function(voiFile) {
-    //   console.log('start play!' + voiFile);
-    //   mediaRec = new Media(voiFile,
-    //     // 成功操作
-    //     function() {
-    //       console.log("play():Audio Success");
-    //     },
-    //     // 失败操作
-    //     function(err) {
-    //       console.log("play():Audio Error: " + JSON.stringify(err));
-    //     }
-    //   );
-    //   //开始播放录音
-    //   mediaRec.play();
-    //   // mediaRec.release();
-    //   return false;
-    //
-    // };
-
-
-    // $scope.play = function(voiFile) {
-    //   console.log('begin play'+voiFile);
-    //   return $ionicPlatform.ready(function() {})
-    //     .then(function(voiFile) {
-    //
-    //       console.log('$ionicPlatform.ready'+voiFile);
-    //       return $cordovaFile.checkFile(voiFile);
-    //     },function(err){
-    //         console.log('err1:'+JSON.stringify(err));
-    //     })
-    //     .then(function(file) {
-    //
-    //       console.log('checkFile'+ JSON.stringify(file));
-    //       media = $cordovaMedia.newMedia(file.nativeURL);
-    //       $cordovaMedia.play(media);
-    //     },function(err){
-    //         console.log('err2:'+JSON.stringify(err));
-    //     });
-    // };
 
     $scope.openImage = function(img) {
        console.log("openImage" + img);
@@ -172,22 +136,9 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
       $ionicScrollDelegate.scrollBottom(true);
     }
 
-    // var chMsg = function(newValue, oldValue) {
-    //   if (newValue !== oldValue) {
-    //     var jsonMsg = newValue.pop();
-    //     if (typeof jsonMsg !== "undefined" && jsonMsg !== "undefined") {
-    //       jsonMsg = JSON.parse(jsonMsg);
-    //       if ($stateParams.targetId == jsonMsg.targetId) {
-    //         clearMessagesUnreadStatus();
-    //         var tmpMsg = myUtil.resolveMsg(jsonMsg);
-    //         $scope.hisMsgs.push(tmpMsg);
-    //       }
-    //     }
-    //   }
-    // }
-
     //标记已读
     var clearMessagesUnreadStatus = function() {
+     console.log("clearMessagesUnreadStatus "+ $stateParams.targetId)
       RongCloudLibPlugin.clearMessagesUnreadStatus({
           conversationType: $stateParams.conversationType,
           targetId: $stateParams.targetId
@@ -200,23 +151,17 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
       );
     }
 
-    // var listener = $rootScope.$watch('arrMsgs', chMsg, true); //只用watch着items的变化
-    // $scope.$on('$destroy', function() {
-    //   //stop watching when scope is destroyed
-    //   listener();
-    // });
     var getLatestMsg = function(targetid, ctype) {
       RongCloudLibPlugin.getLatestMessages({
           conversationType: ctype,
           targetId: targetid,
-          count: 5
+          count: 10
         },
         function(ret, err) {
           if (ret) {
             console.log("getLatestMessages:" + JSON.stringify(ret));
-            var result = new Array(),
-              tmp;
-            for (var i = ret.result.length - 1; i >= 0; i--) {
+            var result = new Array(),tmp;
+            for (var i = 0; i < ret.result.length; i++) {
               tmp = ret.result[i];
               tmp = myUtil.resolveMsg(tmp);
               // var tmpContent = $compile(tmp.content)($scope);
@@ -244,7 +189,7 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
       RongCloudLibPlugin.getHistoryMessages({
           conversationType: ctype,
           targetId: targetid,
-          count: 5,
+          count: 10,
           oldestMessageId: oldestMessageId
         },
         function(ret, err) {
@@ -643,78 +588,6 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
       return false;
     });
 
-    // var src = "cordovaIMVoice.wav";
-    //开始录音
-    // function start() {
-    //   //定义录音文件保存名称及位置（android默认保存在根目录）
-    //   //var src = "sounds/cordovaIMVoice.amr";
-    //   //实例化录音类
-    //   mediaRec = new Media(src,
-    //     // 录音执行函数
-    //     function() {
-    //       console.log("start():Audio Success");
-    //     },
-    //     // 录音失败执行函数
-    //     function(err) {
-    //       console.log("start():Audio Error: " + err.code);
-    //     }
-    //   );
-    // }
-    //
-    // //为按钮绑定  touchstart(点击) 事件
-    // $("#butVoice").on("touchstart", function() {
-    //   //实例化录音类
-    //   start();
-    //   //开始录音
-    //   mediaRec.startRecord();
-    //   date1 = new Date();
-    //   $("#msgContent").val("开始录音");
-    //   return false;
-    // });
-    //
-    // //为按钮绑定 touchmove(手势移动) 事件
-    // $("#butVoice1").on("touchmove", function(e) {
-    //   //这里很关键，如果手势移动会执行另外一个操作，录音就会终止，所以此处需要禁止移动的默认操作。
-    //   e.preventDefault();
-    //   return false;
-    //   //date3 =new Date();
-    //   //$("#test").html("滑动了"+(date3.getTime()-date1.getTime())/1000);
-    // });
-    // //为按钮绑定 touchend(手势离开)事件
-    // $("#butVoice1").on("touchend", function() {
-    //   //结束录音
-    //   mediaRec.stopRecord();
-    //   //释放系统底层的音频播放资源
-    //   mediaRec.release();
-    //   //需要播放的录音的路径
-    //   //var src = "test.mp3";
-    //   //实例化录音类
-    //   mediaRec = new Media(src,
-    //     // 成功操作
-    //     function() {
-    //       console.log("start():Audio Success");
-    //     },
-    //     // 失败操作
-    //     function(err) {
-    //       console.log("start():Audio Error: " + err.code);
-    //     }
-    //   );
-    //
-    //   //在html中显示当前状态
-    //   $("#msgContent").val("停止录音");
-    //   //开始播放录音
-    //   mediaRec.play();
-    //   //在html中显示当前状态
-    //   $("#msgContent").val("--开始播放录音");
-    //   return false;
-    //
-    // });
-    // //判断手势操作有没有变化
-    // $("#butVoice1").on("touchcancel", function(e) {
-    //   //  date2 =new Date();
-    //   //  $("#msgContent").val("状态变化了"+e.type+(date2.getTime()-date1.getTime())/1000);
-    // });
-
     //开始录音
     function start() {
       //定义录音文件保存名称及位置（android默认保存在根目录）
@@ -745,10 +618,11 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
         }
       );
     }
-
+    var startY=0,moveEndY=0,Y=0,isCancel;
     //为按钮绑定  touchstart(点击) 事件
-    $("#butVoice").on("touchstart", function() {
-
+    $("#butVoice").on("touchstart", function(e) {
+      isCancel = false;
+      startY = e.originalEvent.changedTouches[0].pageY;
       //实例化录音类
       start();
       //开始录音
@@ -761,6 +635,14 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
     //为按钮绑定 touchmove(手势移动) 事件
     $("#butVoice").on("touchmove", function(e) {
       //这里很关键，如果手势移动会执行另外一个操作，录音就会终止，所以此处需要禁止移动的默认操作。
+      moveEndY = e.originalEvent.changedTouches[0].pageY;
+      Y = moveEndY - startY;
+      if (Y < -160) {//取消
+        console.log("touchmove Y "+Y)
+        isCancel = true;
+      }else{//不取消
+        isCancel = false;
+      }
       e.preventDefault();
       return false;
       //date3 =new Date();
@@ -773,6 +655,11 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
         mediaRec.stopRecord();
         //释放系统底层的音频播放资源
         mediaRec.release();
+      }
+      console.log("touchend isCancel "+isCancel)
+      if(isCancel){
+          $("#msgContent").val("取消录音");
+          return;
       }
       //需要播放的录音的路径
       //实例化录音类
@@ -881,6 +768,8 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
       //  date2 =new Date();
       //  $("#msgContent").val("状态变化了"+e.type+(date2.getTime()-date1.getTime())/1000);
     });
+
+
     var init = function() {
       // drawExpressionWrap();
       // $("#RongIMexpression").trigger('click');
@@ -900,6 +789,11 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
           $scope.target = { username: '未知群组'}
         }
       }
+      console.log("friend init targetId "+ $scope.targetId + "  $scope.target "+ JSON.stringify($scope.target) )
+
+      RongCloudLibPlugin.setCurrentMessgaeUser({targetId:$scope.targetId});
+      RongCloudLibPlugin.clearNotifications();
+
       clearMessagesUnreadStatus();
       if($stateParams.conversationType == "CUSTOMER_SERVICE"){
             return;
