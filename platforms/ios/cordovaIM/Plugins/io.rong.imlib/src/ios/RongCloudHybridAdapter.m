@@ -457,7 +457,7 @@ static BOOL isConnected = NO;
     }
 
     RCVoiceMessage *rcVoiceMessage = [RCVoiceMessage messageWithAudio:wavData duration:duration.intValue];
-    rcVoiceMessage.extra           = extra;
+    rcVoiceMessage.extra = extra;
     [self _sendMessage:_conversationType withTargetId:targetId withContent:rcVoiceMessage withPushContent:nil withCallBackId:callbackId];
 }
 
