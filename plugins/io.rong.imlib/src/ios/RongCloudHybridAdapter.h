@@ -110,6 +110,8 @@
 
 - (void)disableLocalNotification:(id)callbackId;
 
+-(void)setCurrentMessgaeUser:(NSString*)targetid;
+
 #ifdef RC_SUPPORT_IMKIT
 - (void)startSingleCall:(NSString *)calleeId mediaType:(int)mediaType withCallBackId:(id)cbId;
 #endif

@@ -255,13 +255,16 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
       $cordovaCamera.getPicture(options).then(function(imageURI) {
         // console.log($stateParams.conversationType + '--' + imageURI);
         var picPath = imageURI;
-        console.log("getPicture:" + picPath);
         if(isIOS){
             picPath = imageURI.replace('file://','');
         }
         if(isAndroid){
-            picPath = imageURI.substring(0, imageURI.indexOf('?'));
+            var picPath2 = imageURI.substring(0, imageURI.indexOf('?'));
+            if(picPath2){
+                 picPath = picPath2;
+            }
         }
+        console.log("getPicture after:" + picPath);
         RongCloudLibPlugin.sendImageMessage({
             conversationType: $stateParams.conversationType,
             targetId: $stateParams.targetId,
@@ -549,9 +552,10 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
         $cordovaCapture.captureAudio(options).then(function(mediaFiles) {
           // Success! Audio data is here
           var i, path, len;
+          console.log("captureAudio mediaFiles.length:"+mediaFiles.length);
           for (i = 0, len = mediaFiles.length; i < len; i += 1) {
             path = mediaFiles[i].fullPath;
-            console.log('path:'+path);
+            console.log("captureAudio path:"+path);
             RongCloudLibPlugin.sendVoiceMessage({
                 conversationType: $stateParams.conversationType,
                 targetId: $stateParams.targetId,
@@ -714,6 +718,7 @@ angular.module('cordovaim.frienddetail.controller', ['ionic'])
           if(isIOS){
                tmpPath = path + src;
           }
+                                 
           tmpPath = tmpPath.replace('file://', '');
           console.log('tmpPath:' + tmpPath);
 

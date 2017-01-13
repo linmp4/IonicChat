@@ -49,6 +49,7 @@ static NSString * const PREPARE     =   @"prepare";
 + (NSString *) RCTransferConversationTypeToString:(RCConversationType) type;
 + (NSString *) transferNULLToExptyString:(NSString *)value;
 + (void)postLocalNotification:(NSString*)msg;
++ (void)postLocalNotification:(NSString*)msg Title:(NSString*)title;
 + (void)cancelLocalNotification;
 + (NSString *)formatNotificationMessage:(RCMessageContent *)messageContent;
 

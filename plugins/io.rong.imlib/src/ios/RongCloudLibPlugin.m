@@ -762,4 +762,14 @@
     }
 }
 
+- (void)setCurrentMessgaeUser:(CDVInvokedUrlCommand *)command {
+    NSLog(@"%s", __FUNCTION__);
+    
+   NSString *targetId = [command argumentAtIndex:0 withDefault:nil];
+
+    if (command.callbackId) {
+        [self.rongCloudAdapter setCurrentMessgaeUser:targetId];
+    }
+}
+
 @end

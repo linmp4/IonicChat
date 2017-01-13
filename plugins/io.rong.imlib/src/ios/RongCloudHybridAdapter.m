@@ -37,7 +37,7 @@ static BOOL isConnected = NO;
 @property (nonatomic, strong) id connectionCallbackId;
 @property (nonatomic,strong) id receiveMessageCbId;
 @property (nonatomic, assign)BOOL disableLocalNotification;
-
+@property (nonatomic,strong) NSString *targetId;
 @property (nonatomic, weak)id<RongCloud2HybridDelegation> commandDelegate;
 @end
 
@@ -609,13 +609,15 @@ static BOOL isConnected = NO;
     if (!self.disableLocalNotification) {
         NSNumber *nAppbackgroundMode = [[NSUserDefaults standardUserDefaults]objectForKey:kAppBackgroundMode];
         BOOL _bAppBackgroundMode = [nAppbackgroundMode boolValue];
-        if (YES == _bAppBackgroundMode && 0 == nLeft) {
+//        if (YES == _bAppBackgroundMode && 0 == nLeft) {
+         if (0 == nLeft) {
             //post local notification
             [[RCIMClient sharedRCIMClient]getConversationNotificationStatus:message.conversationType targetId:message.targetId success:^(RCConversationNotificationStatus nStatus) {
-                if (NOTIFY == nStatus) {
-                    NSString *_notificationMessae = @"您收到了一条新消息";
+                if (NOTIFY == nStatus &&(!_targetId || ![message.targetId isEqualToString:_targetId] )) {
+//                    NSString *_notificationMessae = @"您收到了一条新消息";
+                    NSString *_notificationMessae = [self formatNotificationMessage:message.content];
                     
-                    [RongCloudModel postLocalNotification:_notificationMessae];
+                    [RongCloudModel postLocalNotification:_notificationMessae Title:message.senderUserId];
                     
                 }
             } error:^(RCErrorCode status) {
@@ -623,6 +625,30 @@ static BOOL isConnected = NO;
             }];
         }
     }
+}
+
+-(NSString *)formatNotificationMessage:(RCMessageContent *)messageContent
+{
+    NSString * localizedDescription = @"";
+    if ([messageContent isMemberOfClass:RCDiscussionNotificationMessage.class]) {
+        localizedDescription = @"[讨论组新信息]";
+    }
+    else if ([messageContent isMemberOfClass:RCImageMessage.class]) {
+        localizedDescription = @"［图片］";
+    } else if ([messageContent isMemberOfClass:RCTextMessage.class]) {
+        RCTextMessage* textContent = (RCTextMessage*)messageContent;
+        localizedDescription = textContent.content;
+    } else if ([messageContent isMemberOfClass:RCVoiceMessage.class]) {
+        localizedDescription = @"［语音］";
+    } else if ([messageContent isMemberOfClass:RCRichContentMessage.class]) {
+        localizedDescription = @" [图文] ";
+    }else if ([messageContent isMemberOfClass:RCLocationMessage.class]) {
+        localizedDescription = @" [位置] ";
+    }else if([messageContent isMemberOfClass:RCInformationNotificationMessage.class]){
+        RCInformationNotificationMessage  *msg = (RCInformationNotificationMessage*)messageContent;
+        localizedDescription =msg.message;
+    }
+    return localizedDescription;
 }
 
 /**
@@ -1911,6 +1937,10 @@ static BOOL isConnected = NO;
     
     NSDictionary *_result = @{@"status": SUCCESS};
     [self.commandDelegate sendResult:_result error:nil withCallbackId:callbackId doDelete:YES];
+}
+
+-(void)setCurrentMessgaeUser:(NSString*)targetid{
+    _targetId = targetid;
 }
 
 #ifdef RC_SUPPORT_IMKIT
