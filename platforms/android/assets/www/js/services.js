@@ -187,7 +187,7 @@ angular.module('cordovaim.services', [])
    var nonce = Math.floor(Math.random() * 10000000000);
    var timestamp = Date.now();
    var signature = SHA1("" + appSecret + nonce + timestamp);
-    var url = "http://120.92.13.12/";
+    var url = "http://api.cn.ronghub.com/";
 //  var url = "http://webim.demo.rong.io/";
    var headers = {
       "App-Key": _appKey,
@@ -204,7 +204,7 @@ angular.module('cordovaim.services', [])
                  data: 'groupId=' + data.groupId,
                  headers: headers
              };
-        return $http(req);
+        return 9(req);
       },
       getMyToken: function(data) {
         var req = {
