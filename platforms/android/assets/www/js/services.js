@@ -204,7 +204,7 @@ angular.module('cordovaim.services', [])
                  data: 'groupId=' + data.groupId,
                  headers: headers
              };
-        return 9(req);
+        return $http(req);
       },
       getMyToken: function(data) {
         var req = {
