@@ -8,25 +8,28 @@
 
 #import "RongCloudApplicationHandler.h"
 #import <RongIMLib/RongIMLib.h>
+#import <UserNotifications/UserNotifications.h>
 
 NSString *const kAppBackgroundMode = @"kAppBackgroundMode";
 NSString *const kDeviceToken = @"RongCloud_SDK_DeviceToken";
 
-
 @implementation RongCloudApplicationHandler
 + (void)didApplicationFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0) {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound|UIRemoteNotificationTypeAlert];
-    } else {
+  if(IOS8_10){
         [[UIApplication sharedApplication] registerForRemoteNotifications];
         
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge|UIUserNotificationTypeSound|UIUserNotificationTypeAlert categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    }else{
+         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound|UIRemoteNotificationTypeAlert];
     }
 }
+
+
 + (void)didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     
 }
+
 + (void)didApplicationRegisterForRemoteNotificationsWithDeviceToken:(NSString *)deviceToken {
     [[RCIMClient sharedRCIMClient]setDeviceToken:deviceToken];
     

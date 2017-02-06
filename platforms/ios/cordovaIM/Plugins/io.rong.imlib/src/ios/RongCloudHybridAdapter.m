@@ -451,13 +451,13 @@ static BOOL isConnected = NO;
     NSData *wavData ;
     if (amrData.length > 6 && ((unsigned char*)amrData.bytes)[0] == 0x23 && ((unsigned char*)amrData.bytes)[1] == 0x21 && ((unsigned char*)amrData.bytes)[2] == 0x41 && ((unsigned char*)amrData.bytes)[3] == 0x4d && ((unsigned char*)amrData.bytes)[4] == 0x52) {
         //amr first 6 byte are 0x23 0x21 0x41 0x4d 0x52 0X0A(#!AMR.)
-        wavData                = [[RCAMRDataConverter sharedAMRDataConverter]decodeAMRToWAVE:amrData];
+        wavData = [[RCAMRDataConverter sharedAMRDataConverter] decodeAMRToWAVE:amrData];
     } else {
         wavData = amrData;
     }
 
     RCVoiceMessage *rcVoiceMessage = [RCVoiceMessage messageWithAudio:wavData duration:duration.intValue];
-    rcVoiceMessage.extra           = extra;
+    rcVoiceMessage.extra = extra;
     [self _sendMessage:_conversationType withTargetId:targetId withContent:rcVoiceMessage withPushContent:nil withCallBackId:callbackId];
 }
 

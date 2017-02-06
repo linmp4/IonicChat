@@ -70,4 +70,5 @@
 - (void)removeNotificationQuietHours:(CDVInvokedUrlCommand *)command;
 - (void)getNotificationQuietHours:(CDVInvokedUrlCommand *)command;
 - (void)disableLocalNotification:(CDVInvokedUrlCommand *)command;
+- (void)setCurrentMessgaeUser:(CDVInvokedUrlCommand *)command;
 @end
